@@ -15,7 +15,8 @@ using Snowberry.Editor.Recording;
 
 namespace Snowberry;
 
-public sealed class Snowberry : EverestModule {
+// NOTE: Temporarily unsealed to allow forward-facing Starsberry subclass for rename transition.
+public class Snowberry : EverestModule {
     private static Hook hook_MapData_orig_Load, hook_Session_get_MapData;
 
     public const string PlaytestSid = "Snowberry/Playtest";
@@ -61,6 +62,8 @@ public sealed class Snowberry : EverestModule {
 
         LoadModules();
         LoennPluginLoader.LoadPlugins();
+    // Initialize map format providers (Celeste, Ahorn, Loenn, Ingeste extended)
+    Editor.Formats.MapFormatRegistry.EnsureInit();
 
         Fonts.Load();
         DecalPlacementProvider.Reload();
@@ -118,11 +121,17 @@ public sealed class Snowberry : EverestModule {
     }
 
     private static void MainMenu_OnCreateButtons(OuiMainMenu menu, List<MenuButton> buttons) {
-        MainMenuSmallButton btn = new MainMenuSmallButton("EDITOR_MAINMENU", "menu/editor", menu, Vector2.Zero, Vector2.Zero, () => MainMenu.OpenMainMenu());
-        int idx = 2;
-        if (Celeste.Celeste.PlayMode == Celeste.Celeste.PlayModes.Debug)
-            idx++;
-        buttons.Insert(idx, btn);
+        try {
+            MainMenuSmallButton btn = new MainMenuSmallButton("EDITOR_MAINMENU", "menu/editor", menu, Vector2.Zero, Vector2.Zero, () => MainMenu.OpenMainMenu());
+            int idx = 2;
+            if (Celeste.Celeste.PlayMode == Celeste.Celeste.PlayModes.Debug)
+                idx++;
+            if (idx < 0 || idx > buttons.Count)
+                idx = buttons.Count;
+            buttons.Insert(idx, btn);
+        } catch (System.Exception e) {
+            Log(LogLevel.Error, $"Failed to create main menu Starsberry button: {e.Message}\n{e}");
+        }
     }
 
     // from Collab Utils 2, adjusted for Snowberry
@@ -143,7 +152,7 @@ public sealed class Snowberry : EverestModule {
 
             if (returnToMapIndex != -1) {
                 // instantiate the "Return to Editor" button
-                TextMenu.Button rteBtn = new TextMenu.Button(Dialog.Clean("SNOWBERRY_RETURN_TO_EDITOR"));
+                TextMenu.Button rteBtn = new TextMenu.Button(DialogKeyCompat.Clean("SNOWBERRY_RETURN_TO_EDITOR"));
                 rteBtn.Pressed(() => Editor.Editor.Open(level.Session.MapData, rte: true));
 
                 // replace the "Return to Map" button with "Return to Editor"
@@ -164,7 +173,7 @@ public sealed class Snowberry : EverestModule {
                 // TODO: add confirmation screen w/ "save and quit", "quit without saving", and "cancel"
 
                 // instantiate the "Quit" button
-                TextMenu.Button quitBtn = new TextMenu.Button(Dialog.Clean("SNOWBERRY_QUIT"));
+                TextMenu.Button quitBtn = new TextMenu.Button(DialogKeyCompat.Clean("SNOWBERRY_QUIT"));
                 quitBtn.Pressed(() => level.DoScreenWipe(false, () => Engine.Scene = new LevelExit(LevelExit.Mode.SaveAndQuit, level.Session, level.HiresSnow), true));
                 // quitBtn.ConfirmSfx = "event:/ui/main/message_confirm";
 
@@ -176,7 +185,7 @@ public sealed class Snowberry : EverestModule {
         }
     }
 
-    public static void Log(LogLevel level, string message) => Logger.Log(level, "Snowberry", message);
+    public static void Log(LogLevel level, string message) => Logger.Log(level, "Starsberry", message);
 
     public static void LogInfo(string message) => Log(LogLevel.Info, message);
 
@@ -221,7 +230,7 @@ public sealed class Snowberry : EverestModule {
     private static System.Collections.IEnumerator CantEnterRoutine(LevelEnter self) {
         yield return 1f;
         Postcard postcard;
-        self.Add(postcard = new Postcard(Dialog.Get("SNOWBERRY_PLAYTEST_MAP_POSTCARD"), "event:/ui/main/postcard_csides_in", "event:/ui/main/postcard_csides_out"));
+    self.Add(postcard = new Postcard(DialogKeyCompat.Clean("SNOWBERRY_PLAYTEST_MAP_POSTCARD"), "event:/ui/main/postcard_csides_in", "event:/ui/main/postcard_csides_out"));
         new DynamicData(self).Set("postcard", postcard);
         yield return postcard.DisplayRoutine();
         SaveData.Instance.CurrentSession_Safe = new Session(AreaKey.Default);

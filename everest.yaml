@@ -1,6 +1,6 @@
 - Name: Starsberry
   Version: 0.1.0
-  DLL: bin/Snowberry.dll
+  DLL: bin/Starsberry.dll
   Dependencies:
     - Name: Everest
       Version: 1.4866.0

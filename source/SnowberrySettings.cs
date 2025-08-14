@@ -24,6 +24,10 @@ public class SnowberrySettings : EverestModuleSettings {
     [SettingSubText("SNOWBERRY_SETTINGS_SMALL_SCALE_SUB")]
     public bool SmallScale { get; set; } = false;
 
+    [SettingName("SNOWBERRY_SETTINGS_PERF_OVERLAY")]
+    [SettingSubText("SNOWBERRY_SETTINGS_PERF_OVERLAY_SUB")]
+    public bool ShowPerformanceOverlay { get; set; } = false;
+
     // saved but not displayed
     [SettingIgnore]
     public Dictionary<string, (bool show, bool record)> RecorderSettings { get; set; } = new();

@@ -67,6 +67,14 @@ public abstract class Entity : Plugin, Resizable {
 
     public bool Dirty = false;
 
+    // Ingeste extension fields (stubs): will integrate with IngesteExtendedFormatProvider sidecar later
+    // Health points for enemies / bosses; null if not applicable
+    [Option("hp")] public int HP; // exposed as plugin option for now
+    // Flag to indicate this entity should be treated as a boss in extended metadata
+    [Option("isBoss")] public bool IsBoss;
+    // Optional submap id for linking to another map section (multi-map / Kirby-style transitions)
+    [Option("submap")] public string SubmapId;
+
     public readonly List<Vector2> Nodes = [];
 
     private bool updateSelection = true;
@@ -154,6 +162,14 @@ public abstract class Entity : Plugin, Resizable {
         foreach (var (opt, val) in UnknownAttrs)
             if (val != null && !Room.IllegalOptionNames.Contains(opt))
                 e.Attributes.TryAdd(opt, ObjectToStr(val));
+
+        // Extended Ingeste metadata embedding (temporary: put into attributes with prefix until sidecar format implemented)
+        if (IsBoss)
+            e.Attributes["_ing_isBoss"] = true;
+        if (HP > 0)
+            e.Attributes["_ing_hp"] = HP;
+        if (!string.IsNullOrWhiteSpace(SubmapId))
+            e.Attributes["_ing_submap"] = SubmapId;
     }
 
     protected virtual IEnumerable<Rectangle> Select() {

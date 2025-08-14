@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <AssemblyName>Snowberry</AssemblyName>
-    <RootNamespace>Snowberry</RootNamespace>
+  <AssemblyName>Starsberry</AssemblyName>
+  <RootNamespace>Snowberry</RootNamespace>
     <LangVersion>preview</LangVersion>
     <CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\Celeste.dll')">..\..</CelestePrefix>
     <CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\..\Celeste.dll')">..\..\..</CelestePrefix>
@@ -51,7 +51,7 @@
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build">
-    <Copy SourceFiles="$(OutputPath)\Snowberry.dll" DestinationFolder="..\bin" />
-    <Copy SourceFiles="$(OutputPath)\Snowberry.pdb" DestinationFolder="..\bin" />
+  <Copy SourceFiles="$(OutputPath)\Starsberry.dll" DestinationFolder="..\bin" />
+  <Copy SourceFiles="$(OutputPath)\Starsberry.pdb" DestinationFolder="..\bin" />
   </Target>
 </Project>

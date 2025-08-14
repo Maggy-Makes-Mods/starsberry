@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using Snowberry.Editor.Cutscenes;
 
 namespace Snowberry.Editor;
 
@@ -357,6 +358,29 @@ public class Map {
         meta.Children.Add(mode);
 
         map.Children.Add(meta);
+
+        // Cutscenes placeholder integration: future editor UI will populate MapCutscenes list
+        if (CutsceneManager.HasCutscenes(this)) {
+            var csElem = new Element { Name = "cutscenes", Children = [] };
+            foreach (var cs in CutsceneManager.GetCutscenes(this)) {
+                var dict = CutsceneSerialization.SerializeCutscene(cs);
+                var csChild = new Element { Name = "cutscene", Attributes = new Dictionary<string, object>() };
+                if (dict.TryGetValue("id", out var idv)) csChild.Attributes["id"] = idv;
+                if (dict.TryGetValue("nodes", out var nodesObj) && nodesObj is List<Dictionary<string, object>> nodeList) {
+                    csChild.Children = new List<Element>();
+                    foreach (var node in nodeList) {
+                        var nElem = new Element { Name = node["type"].ToString(), Attributes = new Dictionary<string, object>() };
+                        foreach (var (k,v) in node) {
+                            if (k == "type" || v == null) continue;
+                            nElem.Attributes[k] = v;
+                        }
+                        csChild.Children.Add(nElem);
+                    }
+                }
+                csElem.Children.Add(csChild);
+            }
+            map.Children.Add(csElem);
+        }
 
         return map;
     }

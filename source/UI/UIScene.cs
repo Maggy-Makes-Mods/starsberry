@@ -56,6 +56,7 @@ public abstract class UIScene : Scene {
     }
 
     public override void Update() {
+    Editor.PerfProfiler.BeginFrame();
         base.Update();
 
         if (Engine.ViewWidth / UiScale != UI.Width || Engine.ViewHeight / UiScale != UI.Height) {
@@ -78,16 +79,21 @@ public abstract class UIScene : Scene {
         Mouse.World = CalculateMouseWorld(m);
 
         MouseClicked = false;
-        UI.Update();
+    Editor.PerfProfiler.Begin("UI.Update");
+    UI.Update();
+    Editor.PerfProfiler.End();
 
-        UpdateContent();
+    Editor.PerfProfiler.Begin("Scene.UpdateContent");
+    UpdateContent();
+    Editor.PerfProfiler.End();
 
         if (MInput.Mouse.PressedLeftButton)
             Mouse.LastClick = DateTime.Now;
     }
 
     public override void Render() {
-        Draw.SpriteBatch.GraphicsDevice.Clear(BG);
+    Draw.SpriteBatch.GraphicsDevice.Clear(BG);
+    Editor.PerfProfiler.BeginFrame();
 
         bool showUi = ShouldShowUi();
 
@@ -97,8 +103,11 @@ public abstract class UIScene : Scene {
         Engine.Instance.GraphicsDevice.Clear(Color.Transparent);
         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
 
-        if(showUi)
+        if(showUi) {
+            Editor.PerfProfiler.Begin("UI.Render");
             UI.Render();
+            Editor.PerfProfiler.End();
+        }
 
         MTexture curCursor = DefaultCursor;
         Vector2 curJustify = Vector2.Zero;
@@ -122,15 +131,19 @@ public abstract class UIScene : Scene {
 
         #endregion
 
-        RenderContent();
+    Editor.PerfProfiler.Begin("Scene.RenderContent");
+    RenderContent();
+    Editor.PerfProfiler.End();
 
         #region Displaying on Backbuffer
 
         Engine.Instance.GraphicsDevice.SetRenderTarget(null);
 
-        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
-        Draw.SpriteBatch.Draw(UIBuffer, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, Vector2.One * UiScale, SpriteEffects.None, 0f);
-        Draw.SpriteBatch.End();
+    Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+    Draw.SpriteBatch.Draw(UIBuffer, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, Vector2.One * UiScale, SpriteEffects.None, 0f);
+    Editor.PerfProfiler.DrawOverlay();
+    Draw.SpriteBatch.End();
+    Editor.PerfProfiler.Commit();
 
         #endregion
     }

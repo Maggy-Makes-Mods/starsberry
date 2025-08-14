@@ -55,7 +55,7 @@ public class UIMessage : UIElement {
     }
 
     public static UIElement YesAndNoButtons(Action yesPress = null, Action noPress = null) {
-        UIButton yes = new UIButton(Dialog.Clean("SNOWBERRY_MAINMENU_YES"), Fonts.Regular, 4, 6) {
+    UIButton yes = new UIButton(DialogKeyCompat.Clean("SNOWBERRY_MAINMENU_YES"), Fonts.Regular, 4, 6) {
             FG = Util.Colors.White,
             BG = Util.Colors.Blue,
             PressedBG = Util.Colors.White,
@@ -63,7 +63,7 @@ public class UIMessage : UIElement {
             HoveredBG = Util.Colors.DarkBlue,
             OnPress = yesPress
         };
-        UIButton no = new UIButton(Dialog.Clean("SNOWBERRY_MAINMENU_NO"), Fonts.Regular, 4, 6) {
+    UIButton no = new UIButton(DialogKeyCompat.Clean("SNOWBERRY_MAINMENU_NO"), Fonts.Regular, 4, 6) {
             FG = Util.Colors.White,
             BG = Util.Colors.Red,
             PressedBG = Util.Colors.White,
@@ -78,8 +78,8 @@ public class UIMessage : UIElement {
 
     public static void ShowInfoPopup(string infoKey, string closeKey){
         UIScene.Instance.Message.Clear();
-        UIScene.Instance.Message.AddElement(new UILabel(Dialog.Clean(infoKey)), new(0, -10), hiddenJustifyY: -0.1f);
-        UIScene.Instance.Message.AddElement(new UIButton(Dialog.Clean(closeKey), Fonts.Regular, 4, 4){
+    UIScene.Instance.Message.AddElement(new UILabel(DialogKeyCompat.Clean(infoKey)), new(0, -10), hiddenJustifyY: -0.1f);
+    UIScene.Instance.Message.AddElement(new UIButton(DialogKeyCompat.Clean(closeKey), Fonts.Regular, 4, 4){
             OnPress = () => UIScene.Instance.Message.Shown = false
         }, new(0, 20), hiddenJustifyY: -0.1f);
         UIScene.Instance.Message.Shown = true;

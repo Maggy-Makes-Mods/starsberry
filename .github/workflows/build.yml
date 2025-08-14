@@ -21,10 +21,10 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: Snowberry
+        name: Starsberry
         path: |
           everest.yaml
-          bin/Snowberry.dll
+          bin/Starsberry.dll
           Content/**/*
           Dialog/**/*
           Graphics/**/*

@@ -1,11 +1,14 @@
 SNOWBERRY_SNOWBERRY={# d12626}Snowberry{#}
+STARSBERRY_STARSBERRY={# d12626}Starsberry{#}
 
 # *** Celeste Menu ***
-    EDITOR_MAINMENU= Snowberry
+	EDITOR_MAINMENU= Starsberry
 
 # *** Main Menu ***
-    SNOWBERRY_MAINMENU_YES=                     yes
-    SNOWBERRY_MAINMENU_NO=                      no
+	SNOWBERRY_MAINMENU_YES=                     yes
+	STARSBERRY_MAINMENU_YES=                    yes
+	SNOWBERRY_MAINMENU_NO=                      no
+	STARSBERRY_MAINMENU_NO=                     no
     SNOWBERRY_MAINMENU_CLOSE=                   close
 
     SNOWBERRY_MAINMENU_CREATE=                  + new map
